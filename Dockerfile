@@ -11,7 +11,7 @@ COPY --chown=agent:agent src src
 
 RUN \
     --mount=type=cache,target=/home/agent/.cache/uv,uid=1000 \
-    uv sync --locked
+    uv sync --locked --no-install-project
 
 ENV PYTHONUNBUFFERED=1
 ENV AZURE_OPENAI_API_KEY=""
