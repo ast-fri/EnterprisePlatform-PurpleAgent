@@ -22,6 +22,22 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/11/33/719a9331421ee5df0338505548b58b4129a6aca82bba5c8e0593ac8864c7/a2a_sdk-0.3.20-py3-none-any.whl", hash = "sha256:35da261aae28fd22440b61f8eb16a8343b60809e1f7ef028a06d01f17b48a8b9", size = 141547, upload-time = "2025-12-03T15:48:20.812Z" },
 ]
 
+[package.optional-dependencies]
+http-server = [
+    { name = "fastapi" },
+    { name = "sse-starlette" },
+    { name = "starlette" },
+]
+
+[[package]]
+name = "annotated-doc"
+version = "0.0.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/57/ba/046ceea27344560984e26a590f90bc7f4a75b06701f653222458922b558c/annotated_doc-0.0.4.tar.gz", hash = "sha256:fbcda96e87e9c92ad167c2e53839e57503ecfda18804ea28102353485033faa4", size = 7288, upload-time = "2025-11-10T22:07:42.062Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1e/d3/26bf1008eb3d2daa8ef4cacc7f3bfdc11818d111f7e2d0201bc6e3b49d45/annotated_doc-0.0.4-py3-none-any.whl", hash = "sha256:571ac1dc6991c450b25a9c2d84a3705e2ae7a53467b5d111c24fa8baabbed320", size = 5303, upload-time = "2025-11-10T22:07:40.673Z" },
+]
+
 [[package]]
 name = "annotated-types"
 version = "0.7.0"
@@ -154,7 +170,7 @@ name = "enterprise-baseline-purple"
 version = "1.0.0"
 source = { editable = "." }
 dependencies = [
-    { name = "a2a-sdk" },
+    { name = "a2a-sdk", extra = ["http-server"] },
     { name = "httpx" },
     { name = "langchain" },
     { name = "langchain-openai" },
@@ -172,7 +188,7 @@ test = [
 
 [package.metadata]
 requires-dist = [
-    { name = "a2a-sdk", specifier = ">=0.1.0" },
+    { name = "a2a-sdk", extras = ["http-server"], specifier = ">=0.1.0" },
     { name = "httpx", specifier = ">=0.26.0" },
     { name = "langchain", specifier = ">=0.1.0" },
     { name = "langchain-openai", specifier = ">=0.0.5" },
@@ -184,6 +200,21 @@ requires-dist = [
     { name = "uvicorn", specifier = ">=0.27.0" },
 ]
 provides-extras = ["test"]
+
+[[package]]
+name = "fastapi"
+version = "0.128.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "annotated-doc" },
+    { name = "pydantic" },
+    { name = "starlette" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/52/08/8c8508db6c7b9aae8f7175046af41baad690771c9bcde676419965e338c7/fastapi-0.128.0.tar.gz", hash = "sha256:1cc179e1cef10a6be60ffe429f79b829dce99d8de32d7acb7e6c8dfdf7f2645a", size = 365682, upload-time = "2025-12-27T15:21:13.714Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5c/05/5cbb59154b093548acd0f4c7c474a118eda06da25aa75c616b72d8fcd92a/fastapi-0.128.0-py3-none-any.whl", hash = "sha256:aebd93f9716ee3b4f4fcfe13ffb7cf308d99c9f3ab5622d8877441072561582d", size = 103094, upload-time = "2025-12-27T15:21:12.154Z" },
+]
 
 [[package]]
 name = "google-api-core"
@@ -945,6 +976,19 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a2/87/a6771e1546d97e7e041b6ae58d80074f81b7d5121207425c964ddf5cfdbd/sniffio-1.3.1.tar.gz", hash = "sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc", size = 20372, upload-time = "2024-02-25T23:20:04.057Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e9/44/75a9c9421471a6c4805dbf2356f7c181a29c1879239abab1ea2cc8f38b40/sniffio-1.3.1-py3-none-any.whl", hash = "sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2", size = 10235, upload-time = "2024-02-25T23:20:01.196Z" },
+]
+
+[[package]]
+name = "sse-starlette"
+version = "3.1.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "starlette" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/da/34/f5df66cb383efdbf4f2db23cabb27f51b1dcb737efaf8a558f6f1d195134/sse_starlette-3.1.2.tar.gz", hash = "sha256:55eff034207a83a0eb86de9a68099bd0157838f0b8b999a1b742005c71e33618", size = 26303, upload-time = "2025-12-31T08:02:20.023Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b7/95/8c4b76eec9ae574474e5d2997557cebf764bcd3586458956c30631ae08f4/sse_starlette-3.1.2-py3-none-any.whl", hash = "sha256:cd800dd349f4521b317b9391d3796fa97b71748a4da9b9e00aafab32dda375c8", size = 12484, upload-time = "2025-12-31T08:02:18.894Z" },
 ]
 
 [[package]]
