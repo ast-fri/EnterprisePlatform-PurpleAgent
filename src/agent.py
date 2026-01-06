@@ -101,6 +101,7 @@ class BaselinePurpleAgent:
     What is your next action?"""
 
             try:
+                
                 response = await self._llm.ainvoke([
                     SystemMessage(content=system_prompt),
                     HumanMessage(content=user_prompt)
@@ -123,7 +124,7 @@ class BaselinePurpleAgent:
         input_text = get_message_text(message)
         
         print(f"🟣 Purple agent received: {input_text[:200]}...")
-        
+        self._llm = self._get_llm()
         # Extract task information from the prompt
         if "<task>" in input_text:
             task_match = re.search(r"<task>(.*?)</task>", input_text, re.DOTALL)
