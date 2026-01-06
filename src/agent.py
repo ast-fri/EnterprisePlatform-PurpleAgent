@@ -101,7 +101,7 @@ class BaselinePurpleAgent:
     What is your next action?"""
 
             try:
-                response = await self.llm.ainvoke([
+                response = await self._llm.ainvoke([
                     SystemMessage(content=system_prompt),
                     HumanMessage(content=user_prompt)
                 ])
