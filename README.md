@@ -1,87 +1,240 @@
-# A2A Agent Template
+Purple Agent README (EnterprisePlatform-PurpleAgent)
 
-A minimal template for building [A2A (Agent-to-Agent)](https://a2a-protocol.org/latest/) agents.
+```markdown
+# EnterprisePlatform-PurpleAgent 🟣
 
-## Project Structure
+Baseline purple agent for enterprise task evaluation using MCP tools and Azure OpenAI.
 
-```
-src/
-├─ server.py      # Server setup and agent card configuration
-├─ executor.py    # A2A request handling
-├─ agent.py       # Your agent implementation goes here
-└─ messenger.py   # A2A messaging utilities
-tests/
-└─ test_agent.py  # Agent tests
-Dockerfile        # Docker configuration
-pyproject.toml    # Python dependencies
-.github/
-└─ workflows/
-   └─ test-and-publish.yml # CI workflow
-```
+## Overview
 
-## Getting Started
+EnterprisePlatform-PurpleAgent is a baseline implementation of an enterprise AI agent that:
+- Understands task requirements
+- Selects appropriate tools from available MCP tools
+- Executes tool calls with correct parameters
+- Provides clear final answers
 
-1. **Create your repository** - Click "Use this template" to create your own repository from this template
+This agent serves as a baseline for the EnterprisePlatform benchmark.
 
-2. **Implement your agent** - Add your agent logic to [`src/agent.py`](src/agent.py)
+## Features
 
-3. **Configure your agent card** - Fill in your agent's metadata (name, skills, description) in [`src/server.py`](src/server.py)
+- **Azure OpenAI Integration**: Uses GPT-4o for reasoning
+- **Tool Selection**: Intelligently chooses from 69+ enterprise tools
+- **Multi-step Planning**: Handles complex workflows
+- **Error Handling**: Gracefully manages tool failures
+- **A2A Protocol**: Standard agent communication
 
-4. **Write your tests** - Add custom tests for your agent in [`tests/test_agent.py`](tests/test_agent.py)
+## Quick Start
 
-For a concrete example of implementing an agent using this template, see this [draft PR](https://github.com/RDI-Foundation/agent-template/pull/8).
-
-## Running Locally
+### 1. Clone Repository
 
 ```bash
+git clone https://github.com/ast-fri/EnterprisePlatform-PurpleAgent.git
+cd EnterprisePlatform-PurpleAgent
+2. Set Environment Variables
+```
+```bash
+export AZURE_OPENAI_API_KEY="your-key"
+export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com/"
+export AZURE_OPENAI_DEPLOYMENT="gpt-4o"
+export AZURE_OPENAI_API_VERSION="2024-02-01"
+```
+3. Build and Run
+```bash
+# Build Docker image
+docker build -t ghcr.io/ast-fri/enterpriseplatform-purpleagent:latest .
+
+# Run agent
+docker run -p 9009:9009 \
+  -e AZURE_OPENAI_API_KEY=$AZURE_OPENAI_API_KEY \
+  -e AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT \
+  ghcr.io/ast-fri/enterpriseplatform-purpleagent:latest
+```
+How It Works
+1. Receives Task Prompt
+xml
+<task_query>Send a Hi message to suraj.nagaje</task_query>
+<tools_schema_json>
+{
+  "tools": [
+    {
+      "name": "send_direct_message",
+      "description": "Send DM to user",
+      "parameters": {...}
+    }
+  ]
+}
+</tools_schema_json>
+2. Reasons About Solution
+The agent uses Azure OpenAI to:
+
+Understand the task requirement
+
+Identify relevant tools
+
+Plan the execution strategy
+
+3. Executes Action
+Returns structured action:
+
+json
+{
+  "type": "tool_call",
+  "tool": "send_direct_message",
+  "args": {
+    "username": "suraj.nagaje",
+    "message": "Hi"
+  }
+}
+4. Provides Final Answer
+After receiving tool result:
+
+json
+{
+  "type": "final_answer",
+  "content": "Message 'Hi' sent successfully to @suraj.nagaje"
+}
+Configuration
+Environment Variables
+Variable	Description	Required
+AZURE_OPENAI_API_KEY	Azure OpenAI API key	Yes
+AZURE_OPENAI_ENDPOINT	Azure OpenAI endpoint	Yes
+AZURE_OPENAI_DEPLOYMENT	Model name (default: gpt-4o)	No
+AZURE_OPENAI_API_VERSION	API version	No
+MAX_TOKENS	Max tokens per response	No
+TEMPERATURE	Sampling temperature	No
+Message Protocol
+Input Format
+The agent expects messages in this format:
+
+text
+You are an enterprise assistant.
+
+You have access to these tools:
+<tools_schema_json>
+{...}
+</tools_schema_json>
+
+Task: <task_query>
+
+Previous observation (if any): <observation>
+
+Respond with action in XML:
+<action>
+{"type": "tool_call", "tool": "...", "args": {...}}
+</action>
+Output Format
+xml
+<action>
+{
+  "type": "tool_call" | "final_answer",
+  "tool": "tool_name",  // if tool_call
+  "args": {...},        // if tool_call
+  "content": "..."      // if final_answer
+}
+</action>
+Evaluation
+Submit your agent to the leaderboard:
+
+```bash
+# Fork the leaderboard repo
+gh repo fork ast-fri/EnterprisePlatform-leaderboard
+```
+# Update scenario.toml with your agent
+[[participants]]
+role = "YourAgent"
+endpoint = "http://your-agent:9009"
+image = "ghcr.io/your-org/your-agent:latest"
+
+# Push and create PR
+git add scenario.toml
+git commit -m "Submit: YourAgent"
+git push
+Improving the Baseline
+To create a better agent:
+
+Better Prompting: Improve system prompts and few-shot examples
+
+Tool Selection: Add reasoning about tool relevance
+
+Error Recovery: Handle tool failures more gracefully
+
+Multi-step Planning: Better planning for complex tasks
+
+Context Management: Track conversation history
+
+Development
+Project Structure
+text
+EnterprisePlatform-PurpleAgent/
+├── src/
+│   ├── agent.py          # Agent logic
+│   ├── server.py         # A2A server
+│   └── llm.py           # LLM integration
+├── Dockerfile
+├── pyproject.toml
+└── README.md
+Local Development
+bash
 # Install dependencies
 uv sync
 
-# Run the server
-uv run src/server.py
-```
+# Run agent locally
+uv run src/server.py --host 0.0.0.0 --port 9009
 
-## Running with Docker
+# Test with curl
+curl -X POST http://localhost:9009 \
+  -H "Content-Type: application/json" \
+  -d '{"message": "test"}'
+Benchmarking Results
+Latest results on EnterprisePlatform benchmark:
 
-```bash
-# Build the image
-docker build -t my-agent .
+Metric	Score
+Overall	1.00
+Tool Use	1.00
+Answer Quality	1.00
+Success Rate	100%
+Avg Time	6.13s
+See full results at: 
+https://github.com/ast-fri/EnterprisePlatform-leaderboard
 
-# Run the container
-docker run -p 9009:9009 my-agent
-```
+Troubleshooting
+Agent Not Responding
+Check:
 
-## Testing
+Azure OpenAI credentials are correct
 
-Run A2A conformance tests against your agent.
+API has sufficient quota
 
-```bash
-# Install test dependencies
-uv sync --extra test
+Deployment name matches your setup
 
-# Start your agent (uv or docker; see above)
+Tool Calls Failing
+Verify:
 
-# Run tests against your running agent URL
-uv run pytest --agent-url http://localhost:9009
-```
+Tool schema is being parsed correctly
 
-## Publishing
+Arguments match expected format
 
-The repository includes a GitHub Actions workflow that automatically builds, tests, and publishes a Docker image of your agent to GitHub Container Registry.
+LLM is generating valid JSON
 
-If your agent needs API keys or other secrets, add them in Settings → Secrets and variables → Actions → Repository secrets. They'll be available as environment variables during CI tests.
+Poor Performance
+Try:
 
-- **Push to `main`** → publishes `latest` tag:
-```
-ghcr.io/<your-username>/<your-repo-name>:latest
-```
+Adjusting temperature (lower = more deterministic)
 
-- **Create a git tag** (e.g. `git tag v1.0.0 && git push origin v1.0.0`) → publishes version tags:
-```
-ghcr.io/<your-username>/<your-repo-name>:1.0.0
-ghcr.io/<your-username>/<your-repo-name>:1
-```
+Adding examples to prompts
 
-Once the workflow completes, find your Docker image in the Packages section (right sidebar of your repository). Configure the package visibility in package settings.
+Using a more capable model
 
-> **Note:** Organization repositories may need package write permissions enabled manually (Settings → Actions → General). Version tags must follow [semantic versioning](https://semver.org/) (e.g., `v1.0.0`).
+Contributing
+Contributions welcome! Please:
+
+Follow existing code style
+
+Add tests for new features
+
+Update documentation
+
+Submit PR with clear description
+
+License
+MIT License
