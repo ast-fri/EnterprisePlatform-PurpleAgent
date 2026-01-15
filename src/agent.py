@@ -39,7 +39,7 @@ class BaselinePurpleAgent:
             
             self._llm = AzureChatOpenAI(
                 azure_deployment=os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4o"),
-                api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-02-01"),
+                api_version=os.getenv("AZURE_OPENAI_API_VERSION", "2024-08-01-preview"),
                 temperature=0,
             )
         return self._llm
